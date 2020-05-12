@@ -9,7 +9,10 @@
 - `WP1_SensorAgent` sends the sensor numerical data to the `MonitorAgent` instance.
 
 ## connect_agents_smartupunit_v2.py
-- Connect sensor agent with generic plotter
+- Connect sensor agent with generic plotter, where matplotlib figures are generated within and sent from `WP1_SensorAgent`. The sensor agent does not send the raw sensor data to the monitor agent in this case. 
 - I repackaged some functions in generic plotter to be more modular, perhaps a pull request can be made to incorporate into the main repo due to its genericity.
 - Strangely, the `__getShortunitStr` could not be detected and had to be reimported, I guess this is due to the double underscores? I resolved it by removing the underscores:
 `genericPlotter.__getShortunitStr = getShortunitStr`
+
+## Screenshot
+![alt text](https://github.com/bangxiangyong/connect-agentMET4FOF-smartupunit/blob/master/wp1_agents.PNG)

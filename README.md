@@ -13,3 +13,6 @@
 - I repackaged some functions in generic plotter to be more modular, perhaps a pull request can be made to incorporate into the main repo due to its genericity.
 - Strangely, the `__getShortunitStr` could not be detected and had to be reimported, I guess this is due to the double underscores? I resolved it by removing the underscores:
 `genericPlotter.__getShortunitStr = getShortunitStr`
+
+## Screenshot
+![alt text](https://github.com/bangxiangyong/connect-agentMET4FOF-smartupunit/blob/master/wp1_agents.PNG)

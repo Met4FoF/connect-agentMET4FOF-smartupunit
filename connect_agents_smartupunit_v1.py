@@ -1,8 +1,9 @@
 from datareceiver.MET4FOFDataReceiver import DataReceiver
 import time
 import numpy as np
-from agentMET4FOF.agents import AgentMET4FOF, AgentNetwork, MonitorAgent
-from agentMET4FOF.streams import SineGenerator
+from agentMET4FOF.agentMET4FOF.agents import AgentMET4FOF, AgentNetwork, MonitorAgent
+from agentMET4FOF.agentMET4FOF.streams import SineGenerator
+
 
 def unpack_sensor_data(message):
     data_np = np.zeros(16)

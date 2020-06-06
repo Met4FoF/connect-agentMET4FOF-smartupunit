@@ -1,8 +1,8 @@
 from MET4FOFDataReceiver import DataReceiver, genericPlotter
 import time
 import numpy as np
-from agentMET4FOF.agents import AgentMET4FOF, AgentNetwork, MonitorAgent
-from agentMET4FOF.streams import SineGenerator
+from agentMET4FOF.agentMET4FOF.agents import AgentMET4FOF, AgentNetwork, MonitorAgent
+from agentMET4FOF.agentMET4FOF.streams import SineGenerator
 import matplotlib.pyplot as plt
 import copy
 import matplotlib
@@ -83,8 +83,8 @@ genericPlotter.update_Y = update_Y
 genericPlotter.__getShortunitStr =getShortunitStr
 
 class WP1_SensorAgent(AgentMET4FOF):
-    def init_parameters(self, buffer_length=100, plot_mode="plotly"):
-        DR = DataReceiver("192.168.0.200", 7654)
+    def init_parameters(self, buffer_length=100, plot_mode="plotly", ip_address="192.168.1.100"):
+        DR = DataReceiver(ip_address, 7654)
         time.sleep(5)
         firstSensorId = list(DR.AllSensors.keys())[0]
         self.log_info(
@@ -127,6 +127,8 @@ if __name__ == "__main__":
 
     #init agents by adding into the agent network
     gen_agent = agentNetwork.add_agent(agentType= WP1_SensorAgent, log_mode=False)
+    # gen_agent.init_parameters(buffer_length=100,ip_address="192.168.1.100")
+
     monitor_agent = agentNetwork.add_agent(agentType= MonitorAgent, log_mode=False)
 
     #connect agents

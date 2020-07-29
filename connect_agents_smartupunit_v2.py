@@ -1,4 +1,4 @@
-from MET4FOFDataReceiver import DataReceiver, genericPlotter
+from datareceiver.MET4FOFDataReceiver import DataReceiver, genericPlotter
 import time
 import numpy as np
 from agentMET4FOF.agentMET4FOF.agents import AgentMET4FOF, AgentNetwork, MonitorAgent

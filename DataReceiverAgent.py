@@ -27,7 +27,7 @@ from agentMET4FOF.agentMET4FOF.agents import AgentMET4FOF, AgentNetwork, Monitor
 
 class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
     def init_parameters(self, ip_adress="", port=7654, agent_network_ip="127.0.0.1", agent_network_port=3333):
-        self.agent_network = AgentNetwork(ip_addr=agent_network_ip, port= agent_network_port, connect=True, dashboard_modules=False)
+        self.agentNetwork = AgentNetwork(ip_addr=agent_network_ip, port= agent_network_port, connect=True, dashboard_modules=False)
 
         self.loop_wait=0.0#socket.recvfrom() is blocking so no delay needed
         self.flags = {"Networtinited": False}
@@ -115,6 +115,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
                             print("oh no lost an other  thousand packets :(")
                 else:
                     self.AllSensors[SensorID]=self.agentNetwork.add_agent(agentType= SensorAgent, log_mode=False)
+                    self.agentNetwork.add_coalition("Sensor_Group_1", [self]+list(self.AllSensors.values()))
                     print(
                         "FOUND NEW SENSOR WITH ID=hex"
                         + hex(SensorID)
@@ -167,6 +168,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
                         print("packet lost for sensor ID:" + hex(SensorID))
                 else:
                     self.AllSensors[SensorID] = self.agentNetwork.add_agent(agentType= SensorAgent, log_mode=False)
+                    self.agentNetwork.add_coalition("Sensor_Group_1", [self]+list(self.AllSensors.values()))
                     print(
                         "FOUND NEW SENSOR WITH ID=hex"
                         + hex(SensorID)

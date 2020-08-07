@@ -26,23 +26,25 @@ from google.protobuf.internal.decoder import _DecodeVarint32
 from agentMET4FOF.agentMET4FOF.agents import AgentMET4FOF, AgentNetwork, MonitorAgent
 
 class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
-    def init_parameters(self, ip_adress="", port=7654):
+    def init_parameters(self, ip_adress="", port=7654, agent_network_ip="127.0.0.1", agent_network_port=3333):
+        self.agent_network = AgentNetwork(ip_addr=agent_network_ip, port= agent_network_port, connect=True, dashboard_modules=False)
+
         self.loop_wait=0.0#socket.recvfrom() is blocking so no delay needed
         self.flags = {"Networtinited": False}
-        self.params = {"IP": id_adress, "Port": port, "PacketrateUpdateCount": 10000}
+        self.params = {"IP": ip_adress, "Port": port, "PacketrateUpdateCount": 10000}
         self.socket = socket.socket(
             socket.AF_INET, socket.SOCK_DGRAM  # Internet
         )  # UDP
 
         # Try to open the UDP connection
         try:
-            self.socket.bind((id_adress, port))
+            self.socket.bind((ip_adress, port))
         except OSError as err:
             print("OS error: {0}".format(err))
             if err.errno == 99:
                 print(
                     "most likely no network card of the system has the ip address"
-                    + str(id_adress)
+                    + str(ip_adress)
                     + " check this with >>> ifconfig on linux or with >>> ipconfig on Windows"
                 )
             if err.errno == 98:
@@ -95,7 +97,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
 
                 if SensorID in self.AllSensors:
                     try:
-                        self.AllSensors[SensorID].send(message)
+                        self.AllSensors[SensorID].send_output(message)
                     except:
                         tmp = self.packestlosforsensor[SensorID] = (
                                 self.packestlosforsensor[SensorID] + 1
@@ -112,7 +114,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
                         if tmp % 1000 == 0:
                             print("oh no lost an other  thousand packets :(")
                 else:
-                    self.AllSensors[SensorID]=agentNetwork.add_agent(agentType= SensorAgent, log_mode=False)
+                    self.AllSensors[SensorID]=self.agentNetwork.add_agent(agentType= SensorAgent, log_mode=False)
                     print(
                         "FOUND NEW SENSOR WITH ID=hex"
                         + hex(SensorID)
@@ -164,7 +166,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
                     except:
                         print("packet lost for sensor ID:" + hex(SensorID))
                 else:
-                    self.AllSensors[SensorID] = agentNetwork.add_agent(agentType= SensorAgent, log_mode=False)
+                    self.AllSensors[SensorID] = self.agentNetwork.add_agent(agentType= SensorAgent, log_mode=False)
                     print(
                         "FOUND NEW SENSOR WITH ID=hex"
                         + hex(SensorID)
@@ -913,8 +915,7 @@ if __name__ == "__main__":
     agentNetwork = AgentNetwork()
 
     #init agents by adding into the agent network
-    gen_agent = agentNetwork.add_agent(agentType= Met4FOFSSUDataReceiverAgent, log_mode=False)
-    # gen_agent.init_parameters(buffer_length=100,ip_address="192.168.1.100")
+    gen_agent = agentNetwork.add_agent(agentType=Met4FOFSSUDataReceiverAgent, log_mode=False)
 
     monitor_agent = agentNetwork.add_agent(agentType= MonitorAgent, log_mode=False)
 

@@ -1,0 +1,2 @@
+-r datareceiver/requirements.txt
+-r agentMET4FOF/requirements.txt

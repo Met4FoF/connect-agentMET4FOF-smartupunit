@@ -87,7 +87,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
                     ProtoData.ParseFromString(msg_buf)
                     wasValidData = True
                     SensorID = ProtoData.id
-                    message = {"ProtMsg": copy.deepcopy(ProtoData), "Type": "Data"}
+                    message = {"ProtMsg": msg_buf, "Type": "Data"}
                     BytesProcessed += msg_len
                 except:
                     pass  # ? no exception for wrong data type !!
@@ -153,7 +153,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
                     # print(msg_buf)
                     wasValidData = True
                     SensorID = ProtoDescription.id
-                    message = {"ProtMsg": ProtoDescription, "Type": "Description"}
+                    message = {"ProtMsg": msg_buf, "Type": "Description"}
                     BytesProcessed += msg_len
                 except:
                     pass  # ? no exception for wrong data type !!
@@ -682,7 +682,8 @@ class SensorAgent(AgentMET4FOF):
                     + "%"
                 )
         if message["Type"] == "Description":
-            Description = message["ProtMsg"]
+            ProtoDescription = messages_pb2.DescriptionMessage()
+            Description = ProtoDescription.ParseFromString(message["ProtMsg"])
             try:
                 if (
                     not any(self.DescriptionsProcessed.values())
@@ -761,10 +762,13 @@ class SensorAgent(AgentMET4FOF):
                 print("-" * 60)
                 traceback.print_exc(file=sys.stdout)
                 print("-" * 60)
+        if message["Type"] == "Data":
+            ProtoData = messages_pb2.DataMessage()
+            Data = ProtoData.ParseFromString(message["ProtMsg"])
         if self.flags["callbackSet"]:
             if message["Type"] == "Data":
                 try:
-                    self.callback(message["ProtMsg"], self.Description)
+                    self.callback(Data, self.Description)
                 except Exception:
                     print(
                         " Sensor id:"
@@ -779,7 +783,7 @@ class SensorAgent(AgentMET4FOF):
         if self.flags["DumpToFileProto"]:
             if message["Type"] == "Data":
                 try:
-                    self.__dumpMsgToFileProto(message["ProtMsg"])
+                    self.__dumpMsgToFileProto(Data)
                 except Exception:
                     print(
                         " Sensor id:"
@@ -793,7 +797,7 @@ class SensorAgent(AgentMET4FOF):
         if self.flags["DumpToFileASCII"]:
             if message["Type"] == "Data":
                 try:
-                    self.__dumpMsgToFileASCII(message["ProtMsg"])
+                    self.__dumpMsgToFileASCII(Data)
                 except Exception:
                     print(
                         " Sensor id:"

@@ -26,10 +26,10 @@ from google.protobuf.internal.decoder import _DecodeVarint32
 from agentMET4FOF.agentMET4FOF.agents import AgentMET4FOF, AgentNetwork, MonitorAgent
 
 class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
-    def init_parameters(self, ip_adress="", port=7654, agent_network_ip="127.0.0.1", agent_network_port=3333):
+    def init_parameters(self, ip_adress="192.168.1.102", port=7654, agent_network_ip="127.0.0.1", agent_network_port=3333):
         self.agentNetwork = AgentNetwork(ip_addr=agent_network_ip, port= agent_network_port, connect=True, dashboard_modules=False)
 
-        self.loop_wait=0.0#socket.recvfrom() is blocking so no delay needed
+        self.loop_wait=0.0 #socket.recvfrom() is blocking so no delay needed
         self.flags = {"Networtinited": False}
         self.params = {"IP": ip_adress, "Port": port, "PacketrateUpdateCount": 10000}
         self.socket = socket.socket(
@@ -73,6 +73,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
         data, addr = self.socket.recvfrom(1500)  # buffer size is 1024 bytes
         wasValidData = False
         wasValidDescription = False
+
         ProtoData = messages_pb2.DataMessage()
         ProtoDescription = messages_pb2.DescriptionMessage()
         SensorID = 0
@@ -114,7 +115,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
                         if tmp % 1000 == 0:
                             print("oh no lost an other  thousand packets :(")
                 else:
-                    self.AllSensors[SensorID]=self.agentNetwork.add_agent(agentType= SensorAgent, log_mode=False)
+                    self.AllSensors[SensorID]=self.agentNetwork.add_agent(agentType= SensorAgent, log_mode=False, ID=SensorID)
                     self.agentNetwork.add_coalition("Sensor_Group_1", [self]+list(self.AllSensors.values()))
                     print(
                         "FOUND NEW SENSOR WITH ID=hex"
@@ -167,7 +168,7 @@ class Met4FOFSSUDataReceiverAgent(AgentMET4FOF):
                     except:
                         print("packet lost for sensor ID:" + hex(SensorID))
                 else:
-                    self.AllSensors[SensorID] = self.agentNetwork.add_agent(agentType= SensorAgent, log_mode=False)
+                    self.AllSensors[SensorID]=self.agentNetwork.add_agent(agentType= SensorAgent, log_mode=False, ID=SensorID)
                     self.agentNetwork.add_coalition("Sensor_Group_1", [self]+list(self.AllSensors.values()))
                     print(
                         "FOUND NEW SENSOR WITH ID=hex"
